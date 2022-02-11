@@ -6,7 +6,7 @@
           <img :src="chatSvg" />
         </div>
         <div class="profileIcon" @click="setOpenAccountModal">
-          {{ name | modifyFirstLetterToUpperCase }}
+          {{ modifyFirstLetterToUpperCase(name) }}
         </div>
       </div>
       <div class="content"><slot></slot></div>
@@ -19,7 +19,7 @@
       </div>
     </div>
     <Modal
-      v-if="isOpenAccountModal"
+      v-show="isOpenAccountModal"
       @onClose="setOpenAccountModal"
       title="Profile Settings"
     >

@@ -1,29 +1,36 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import getUserId from './services/getUserId';
-import ChatPage from './pages/ChatPage.vue';
-import GreetingPage from './pages/GreetingPage.vue';
-import NotFoundPage from './pages/NotFoundPage.vue';
+
+// pages
+// lazy-loading
+const ChatPage = () => import('./pages/ChatPage');
+const GreetingPage = () => import('./pages/GreetingPage');
+const NotFoundPage = () => import('./pages/NotFoundPage');
 
 const routes = [
   {
     path: '/',
     name: 'Chat',
     component: ChatPage,
-    // meta: {
-    //   nickName: true,
-    // },
+    meta: {
+      nickName: true,
+    },
   },
   {
     path: '/greeting',
     name: 'Greeting',
     component: GreetingPage,
-    // meta: {
-    //   nickName: false,
-    // },
+    meta: {
+      nickName: false,
+    },
+  },
+  {
+    path: '/404',
+    name: 'NotFound',
+    component: NotFoundPage,
   },
   {
     path: '/:catchAll(.*)',
-    component: NotFoundPage,
+    redirect: '/404',
   },
 ];
 
@@ -32,11 +39,5 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  const isUserExist = getUserId();
-  if (to.name !== 'Greeting' && !isUserExist) next({ name: 'Greeting' });
-  if (to.name === 'Greeting' && isUserExist) next({ name: 'Chat' });
-  else next();
-});
 
 export default router;

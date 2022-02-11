@@ -9,7 +9,6 @@
 
 <script>
 export default {
-  name: 'NotFoundPage',
   methods: {
     goBack() {
       this.$router.push('/');
