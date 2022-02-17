@@ -2,7 +2,7 @@
   <div>
     <div class="container">
       <div class="header">
-        <div class="logo" @click="onLinkMainPage">
+        <div class="logo">
           <img :src="chatSvg" />
         </div>
         <div class="profileIcon" @click="setOpenAccountModal">
@@ -12,7 +12,7 @@
       <div class="content"><slot></slot></div>
 
       <div class="footer">
-        <div class="logo" @click="onLinkMainPage">
+        <div class="logo">
           <img :src="chatSvg" />
         </div>
         <p>Chat app</p>
@@ -33,41 +33,39 @@ import Modal from '../components/Modal';
 import ProfileSettings from '../components/ProfileSettings';
 import chatSvg from '../assets/icons/chat.svg';
 import { EDIT_USER_NAME } from '../store/actions.type';
+import { ref } from 'vue';
+import { useStore } from 'vuex';
 
 export default {
-  name: 'ChatContainer',
   components: { ProfileSettings, Modal },
   props: {
     name: String,
   },
-  data() {
-    return {
-      chatSvg: chatSvg,
-      isOpenAccountModal: false,
+  setup() {
+    const store = useStore();
+
+    const isOpenAccountModal = ref(false);
+
+    const setOpenAccountModal = () => {
+      const currentState = isOpenAccountModal.value;
+      isOpenAccountModal.value = !currentState;
     };
-  },
-  computed: {
-    isValidMessage: function () {
-      return this.newMessageTest && this.newMessageTest?.trim();
-    },
-  },
-  methods: {
-    onLinkMainPage() {
-      this.$router.push('/');
-    },
-    setOpenAccountModal() {
-      const currentState = this.isOpenAccountModal;
-      this.isOpenAccountModal = !currentState;
-    },
-    onChangeUserName(value) {
-      this.$store.dispatch(EDIT_USER_NAME, value);
-      this.setOpenAccountModal();
-    },
-  },
-  filters: {
-    modifyFirstLetterToUpperCase: function (value) {
-      return value?.substring(0, 1)?.toUpperCase() || '';
-    },
+
+    const onChangeUserName = (value) => {
+      store.dispatch(EDIT_USER_NAME, value);
+      setOpenAccountModal();
+    };
+
+    const modifyFirstLetterToUpperCase = (value) =>
+      value?.substring(0, 1)?.toUpperCase() || '';
+
+    return {
+      chatSvg,
+      isOpenAccountModal,
+      setOpenAccountModal,
+      onChangeUserName,
+      modifyFirstLetterToUpperCase,
+    };
   },
 };
 </script>

@@ -5,8 +5,9 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 export default {
-  name: 'Button',
   props: {
     text: String,
     invalid: {
@@ -14,15 +15,14 @@ export default {
       default: false,
     },
   },
-  computed: {
-    buttonClass() {
-      return `button ${this.invalid && 'invalid'}`;
-    },
-  },
-  methods: {
-    buttonClick() {
-      if (!this.invalid) this.$emit('onClick');
-    },
+  setup(props, { emit }) {
+    const buttonClass = computed(() => `button ${props.invalid && 'invalid'}`);
+
+    const buttonClick = () => {
+      if (!props.invalid) emit('onClick');
+    };
+
+    return { buttonClass, buttonClick };
   },
 };
 </script>

@@ -1,20 +1,13 @@
 <template>
   <div class="container">
     <h1>Page not found</h1>
-    <div class="button" @click="goBack">
+    <div class="button" @click="$router.push('/')">
       <p>Go back</p>
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  methods: {
-    goBack() {
-      this.$router.push('/');
-    },
-  },
-};
 </script>
 
 <style scoped>

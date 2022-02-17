@@ -16,14 +16,15 @@
 
 <script>
 export default {
-  name: 'Modal',
   props: {
     title: String,
   },
-  methods: {
-    onKeydown({ key }) {
-      if (key === 'Escape') this.$emit('onClose');
-    },
+  setup(_, { emit }) {
+    const onKeydown = ({ key }) => {
+      if (key === 'Escape') emit('onClose');
+    };
+
+    return { onKeydown };
   },
   mounted() {
     document.addEventListener('keydown', this.onKeydown);

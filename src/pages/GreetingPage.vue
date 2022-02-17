@@ -2,7 +2,12 @@
   <div class="block">
     <h1 class="title">Nice to meet you</h1>
     <p class="subtitle">What is your name?</p>
-    <Input v-model="nickName" placeholder="Nickname" @onSave="onSaveNickName" />
+    <Input
+      :value="nickName"
+      placeholder="Nickname"
+      @onSave="onSaveNickName"
+      @onChangeValue="onChangeNickName"
+    />
     <Button
       text="Chat!"
       @onClick="onSaveNickName"
@@ -12,27 +17,29 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue';
 import { EDIT_USER_NAME } from '../store/actions.type';
 import Input from '../components/Input.vue';
 import Button from '../components/Button.vue';
+import { useStore } from 'vuex';
 
 export default {
-  name: 'GreetingPage',
   components: { Input, Button },
-  data: function () {
-    return {
-      nickName: null,
+  setup() {
+    const store = useStore();
+
+    const nickName = ref(null);
+    const isInvalidNickName = computed(
+      () => !nickName.value || !nickName.value?.trim()
+    );
+
+    const onChangeNickName = (newVal) => (nickName.value = newVal);
+
+    const onSaveNickName = () => {
+      store.dispatch(EDIT_USER_NAME, nickName.value);
     };
-  },
-  computed: {
-    isInvalidNickName: function () {
-      return !this.nickName || !this.nickName?.trim();
-    },
-  },
-  methods: {
-    onSaveNickName() {
-      this.$store.dispatch(EDIT_USER_NAME, this.nickName);
-    },
+
+    return { nickName, isInvalidNickName, onChangeNickName, onSaveNickName };
   },
 };
 </script>
@@ -46,7 +53,6 @@ export default {
   margin-top: 80px;
 }
 
-/* .block >>> .button { */
 .block:deep() .button {
   margin-top: 20px;
   padding: 15px 25px;
