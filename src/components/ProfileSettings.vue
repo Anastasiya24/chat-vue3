@@ -35,7 +35,7 @@ export default {
     const onChangeNickName = (newVal) => (nickName.value = newVal);
     const onSaveNickName = () => emit('onChangeUserName', nickName.value);
 
-    // TODO THIS
+    // THIS
     onBeforeUnmount(() => {
       console.log('onBeforeUnmount');
       nickName.value = null;

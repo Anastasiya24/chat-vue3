@@ -12,9 +12,9 @@
       </div>
       <div class="textareaFooter">
         <Textarea
-          v-model="newMessageTest"
-          ref="textarea"
+          :value="newMessageTest"
           @onSave="sendMessage"
+          @onChangeValue="onChangeMessage"
           placeholder="Your message"
         />
         <img
@@ -29,40 +29,53 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import { GET_USER_NAME, GET_MESSAGES_LIST, ADD_NEW_MESSAGE } from '../store/actions.type';
+import { mapGetters, useStore } from 'vuex';
+import {
+  GET_USER_NAME,
+  GET_MESSAGES_LIST,
+  ADD_NEW_MESSAGE,
+} from '../store/actions.type';
 
 import ChatContainer from '../layouts/ChatContainer';
 import Message from '../components/Message';
 import Textarea from '../components/Textarea';
 import sendSvg from '../assets/icons/send.svg';
+import { ref, computed, onMounted } from 'vue';
 
 export default {
-  name: 'ChatPage',
   components: { ChatContainer, Message, Textarea },
-  data() {
+  setup() {
+    const store = useStore();
+
+    onMounted(() => {
+      store.dispatch(GET_USER_NAME);
+      store.dispatch(GET_MESSAGES_LIST);
+    });
+    const newMessageTest = ref('');
+
+    const isValidMessage = computed(
+      () => newMessageTest.value && newMessageTest.value?.trim()
+    );
+
+    const onChangeMessage = (value) => (newMessageTest.value = value);
+
+    const sendMessage = () => {
+      store.dispatch(ADD_NEW_MESSAGE, newMessageTest.value);
+      newMessageTest.value = '';
+    };
+
     return {
-      sendSvg: sendSvg,
-      newMessageTest: '',
+      sendSvg,
+      newMessageTest,
+      isValidMessage,
+      onChangeMessage,
+      sendMessage,
     };
   },
+
   computed: {
-    isValidMessage: function () {
-      return this.newMessageTest && this.newMessageTest?.trim();
-    },
+    // THIS
     ...mapGetters(['name', 'messages']),
-  },
-  methods: {
-    sendMessage() {
-      this.$store.dispatch(ADD_NEW_MESSAGE, this.newMessageTest);
-      this.newMessageTest = '';
-      // clean child textarea
-      this.$refs.textarea.onCleanTextarea();
-    },
-  },
-  mounted() {
-    this.$store.dispatch(GET_USER_NAME);
-    this.$store.dispatch(GET_MESSAGES_LIST);
   },
 };
 </script>

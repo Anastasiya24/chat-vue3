@@ -1,6 +1,7 @@
 <template>
   <textarea
-    v-model="model"
+    :value="value"
+    @input="(event) => onChangeValue(event.target.value)"
     :class="$style.textarea"
     :placeholder="placeholder"
     v-on:keyup.enter="onKeyPress"
@@ -9,7 +10,6 @@
 
 <script>
 export default {
-  name: 'Textarea',
   props: {
     value: {
       type: String,
@@ -20,26 +20,18 @@ export default {
       default: '',
     },
   },
-  data() {
-    return {
-      model: this.value,
-    };
-  },
-  methods: {
-    onKeyPress() {
-      if (this.model?.trim()) {
-        this.$emit('onSave', this.value);
-        this.model = '';
+  setup(props, { emit }) {
+    const onKeyPress = () => {
+      if (props.value?.trim()) {
+        emit('onSave', props.value);
       }
-    },
-    onCleanTextarea() {
-      this.model = '';
-    },
-  },
-  watch: {
-    model(currentValue) {
-      this.$emit('input', currentValue);
-    },
+    };
+
+    const onChangeValue = (newVal) => {
+      emit('onChangeValue', newVal);
+    };
+
+    return { onKeyPress, onChangeValue };
   },
 };
 </script>
